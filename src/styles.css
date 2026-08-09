@@ -51,8 +51,8 @@ ul {
 
 #themeSwitcher {
   position: absolute;
-  right: 40px;
-  top: 20px;
+  right: 2rem;
+  top: 1rem;
 }
 
 #themeSwitcher:hover {
