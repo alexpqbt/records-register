@@ -13,7 +13,6 @@ This is a simple CRUD project that register's a person's information for the chu
 git clone <repo URL>
 pnpm install
 pnpm tauri run dev
-pnpm tauri run dev
 ```
 
 # Building
