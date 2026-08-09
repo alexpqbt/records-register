@@ -1,0 +1,34 @@
+ul {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.register-form button {
+  margin-top: 1.7em;
+  height: 50%;
+}
+
+.single-line-truncate {
+  width: 90%;            
+  white-space: nowrap;    
+  overflow: hidden;       
+  text-overflow: ellipsis;
+}
+
+.search-result .btn-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.2em;
+}
+
+.info-btn {
+  background-color: white;
+  color: #111111;
+  border-color: #111111;
+}
+
+.delete-btn {
+  border-color: #D93526;
+  background-color: #D93526;
+}
