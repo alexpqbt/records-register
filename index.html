@@ -84,6 +84,37 @@
         </footer>
       </article>
     </dialog>
+
+    <dialog id="editModal">
+      <article>
+        <header>
+          <button aria-label="Close" rel="prev" id="closeEditModal"></button>
+          <p><strong>Edit Record</strong></p>
+        </header>
+        <form id="editForm">
+          <input type="hidden" id="editId" name="id">
+          <div class="grid">
+            <label>
+              Last Name
+              <input type="text" id="editLastname" name="lastname" required>
+            </label>
+            <label>
+              First Name
+              <input type="text" id="editFirstname" name="firstname" required>
+            </label>
+            <label>
+              Middle
+              <input type="text" id="editMiddle" name="middle">
+            </label>
+            <label>
+              <div class="single-line-truncate">Date of First Communion</div>
+              <input type="date" id="editDofc" name="dofc" required>
+            </label>
+          </div>
+          <button type="submit">Save Changes</button>
+        </form>
+      </article>
+    </dialog>
   </main>
 </body>
 

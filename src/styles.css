@@ -43,3 +43,8 @@ ul {
   border-color: #D93526;
   background-color: #D93526;
 }
+
+#editModal article {
+  width: 100%;
+  max-width: 900px;
+}

@@ -21,6 +21,11 @@ const cancelDelete = document.getElementById(
 const confirmDelete = document.getElementById(
   "confirmDelete",
 ) as HTMLButtonElement;
+const editModal = document.getElementById("editModal") as HTMLDialogElement;
+const closeEditModal = document.getElementById(
+  "closeEditModal",
+) as HTMLButtonElement;
+const editForm = document.getElementById("editForm") as HTMLFormElement;
 
 let pendingDeleteId: string | null = null;
 
@@ -135,13 +140,68 @@ async function deleteRecord() {
   performSearch(searchInput.value);
 }
 
+async function openEditModal(id: string) {
+  const rows = await db.select<Record<string, any>[]>(
+    "SELECT * FROM records WHERE id = $1",
+    [id],
+  );
+  const row = rows[0];
+  if (!row) return;
+
+  (document.getElementById("editId") as HTMLInputElement).value = row.id;
+  (document.getElementById("editLastname") as HTMLInputElement).value =
+    row.lastname;
+  (document.getElementById("editFirstname") as HTMLInputElement).value =
+    row.firstname;
+  (document.getElementById("editMiddle") as HTMLInputElement).value =
+    row.middle ?? "";
+  (document.getElementById("editDofc") as HTMLInputElement).value = row.dofc;
+
+  editModal?.showModal();
+}
+
+async function submitEdit(e: SubmitEvent) {
+  e.preventDefault();
+  const data = new FormData(editForm);
+
+  await db.execute(
+    "UPDATE records SET lastname = $1, firstname = $2, middle = $3, dofc = $4 WHERE id = $5",
+    [
+      data.get("lastname") as string,
+      data.get("firstname") as string,
+      (data.get("middle") as string) || null,
+      data.get("dofc") as string,
+      data.get("id") as string,
+    ],
+  );
+
+  editModal?.close();
+  performSearch(searchInput.value);
+}
+
+function setupDialog(
+  dialog: HTMLDialogElement | null,
+  closeBtn: HTMLButtonElement | null,
+) {
+  closeBtn?.addEventListener("click", () => dialog?.close());
+
+  if (!dialog) return;
+  let mousedownOnBackdrop = false;
+  dialog.addEventListener("mousedown", (e) => {
+    mousedownOnBackdrop = e.target === dialog;
+  });
+  dialog.addEventListener("click", (e) => {
+    if (mousedownOnBackdrop && e.target === dialog) dialog.close();
+  });
+}
+
+editForm?.addEventListener("submit", submitEdit);
+
 searchInput?.addEventListener("input", (e) => {
   performSearch((e.target as HTMLInputElement).value);
 });
 
 registerForm?.addEventListener("submit", submitForm);
-
-closeInfoModal?.addEventListener("click", () => infoModal?.close());
 
 resultBody?.addEventListener("click", (e) => {
   const target = (e.target as HTMLElement).closest("button");
@@ -154,21 +214,16 @@ resultBody?.addEventListener("click", (e) => {
     openInfoModal(id);
   } else if (target.classList.contains("delete-btn")) {
     openDeleteModal(id);
+  } else if (target.classList.contains("edit-btn")) {
+    openEditModal(id);
   }
 });
 
-infoModal?.addEventListener("click", (e) => {
-  if (e.target === infoModal) {
-    infoModal.close();
-  }
-});
-
-closeDeleteModal?.addEventListener("click", () => deleteModal?.close());
 cancelDelete?.addEventListener("click", () => deleteModal?.close());
 confirmDelete?.addEventListener("click", deleteRecord);
 
-deleteModal?.addEventListener("click", (e) => {
-  if (e.target === deleteModal) deleteModal.close();
-});
-
 performSearch("");
+
+setupDialog(infoModal, closeInfoModal);
+setupDialog(deleteModal, closeDeleteModal);
+setupDialog(editModal, closeEditModal);
