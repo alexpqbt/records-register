@@ -13,9 +13,10 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "baptismal-records",
-        "width": 800,
-        "height": 600
+        "title": "SHJP Baptismal Records",
+        "resizable": true,
+        "width": 1280,
+        "height": 720
       }
     ],
     "security": {
