@@ -1,8 +1,8 @@
 [package]
 name = "baptismal-records"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "Baptismal and First Communion records register"
+authors = ["Alexandre Paquibot"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -30,6 +30,6 @@ tauri-plugin-fs = "2"
 [profile.release]
 codegen-units = 1
 lto = true
-opt-level = 3
+opt-level = "z"
 panic = "abort"
 strip = true
