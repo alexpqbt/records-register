@@ -31,6 +31,8 @@ const editForm = $<HTMLFormElement>("editForm");
 const themeSwitcher = $<HTMLButtonElement>("themeSwitcher");
 const html = document.documentElement;
 
+const toastContainer = $<HTMLDivElement>("toastContainer");
+
 let pendingDeleteId: string | null = null;
 
 // ---------- Formatting ----------
@@ -88,6 +90,7 @@ async function submitForm(e: SubmitEvent) {
     );
     performSearch("");
     form.reset();
+    showToast("Record added.");
   } catch (err) {
     console.error(err);
     showError("Could not save the record. Please try again.");
@@ -172,9 +175,10 @@ async function deleteRecord() {
     await db.execute("UPDATE records SET is_active = 0 WHERE id = $1", [pendingDeleteId]);
     deleteModal.close();
     performSearch(searchInput.value);
+    showToast("Record deleted.");
   } catch (err) {
     console.error(err);
-    showError("Could not delete the record. Please try again.");
+    showError("Could not delete the record.");
   } finally {
     pendingDeleteId = null;
   }
@@ -212,9 +216,10 @@ async function submitEdit(e: SubmitEvent) {
     );
     editModal.close();
     performSearch(searchInput.value);
+    showToast("Record updated.");
   } catch (err) {
     console.error(err);
-    showError("Could not save changes. Please try again.");
+    showError("Could not save changes.");
   }
 }
 
@@ -257,6 +262,22 @@ confirmDelete.addEventListener("click", deleteRecord);
 setupDialog(infoModal, closeInfoModal);
 setupDialog(deleteModal, closeDeleteModal);
 setupDialog(editModal, closeEditModal);
+
+// ---------- Toast ----------
+
+function showToast(message: string) {
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.textContent = message;
+  toastContainer.appendChild(toast);
+
+  requestAnimationFrame(() => toast.classList.add("show"));
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    toast.addEventListener("transitionend", () => toast.remove(), { once: true });
+  }, 2500);
+}
 
 // ---------- Error handling ----------
 
