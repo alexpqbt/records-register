@@ -12,9 +12,15 @@ const closeInfoModal = document.getElementById(
   "closeInfoModal",
 ) as HTMLButtonElement;
 const deleteModal = document.getElementById("deleteModal") as HTMLDialogElement;
-const closeDeleteModal = document.getElementById("closeDeleteModal") as HTMLButtonElement;
-const cancelDelete = document.getElementById("cancelDelete") as HTMLButtonElement;
-const confirmDelete = document.getElementById("confirmDelete") as HTMLButtonElement;
+const closeDeleteModal = document.getElementById(
+  "closeDeleteModal",
+) as HTMLButtonElement;
+const cancelDelete = document.getElementById(
+  "cancelDelete",
+) as HTMLButtonElement;
+const confirmDelete = document.getElementById(
+  "confirmDelete",
+) as HTMLButtonElement;
 
 let pendingDeleteId: string | null = null;
 
@@ -121,7 +127,9 @@ function openDeleteModal(id: string) {
 
 async function deleteRecord() {
   if (!pendingDeleteId) return;
-  await db.execute("UPDATE records SET is_active = 0 WHERE id = $1", [pendingDeleteId]);
+  await db.execute("UPDATE records SET is_active = 0 WHERE id = $1", [
+    pendingDeleteId,
+  ]);
   pendingDeleteId = null;
   deleteModal?.close();
   performSearch(searchInput.value);
