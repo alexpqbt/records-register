@@ -12,57 +12,63 @@
 
 <body>
   <main class="container">
+    <h2>Register</h2>
+    <form class="register-form" id="registerForm">
+      <div class="grid">
+        <label>
+          Last Name
+          <input type="text" id="lastname" name="lastname" required>
+        </label>
+        <label>
+          First Name
+          <input type="text" id="firstname" name="firstname" required>
+        </label>
+        <label>
+          <div class="single-line-truncate">Middle Initial/Name</div>
+          <input type="text" id="middle" name="middle">
+        </label>
+        <label>
+          <div class="single-line-truncate">Date of First Communion</div>
+          <input type="date" id="communion-date" name="communion-date" required>
+        </label>
+        <button type="submit">Register</button>
+      </div>
+    </form>
+
+    <hr>
+
     <div>
-      <form class="register-form" id="registerForm">
-        <h2>Register</h2>
-        <div class="grid">
-          <label>
-            Last Name
-            <input type="text" id="lastname" name="lastname" required>
-          </label>
-          <label>
-            First Name
-            <input type="text" id="firstname" name="firstname" required>
-          </label>
-
-          <label>
-            <div class="single-line-truncate">Middle Initial/Name</div>
-            <input type="text" id="middle" name="middle">
-          </label>
-
-          <label>
-            <div class="single-line-truncate">Date of First Communion</div>
-            <input type="date" id="communion-date" name="communion-date" required>
-          </label>
-          <button type="submit">Register</button>
-        </div>
+      <h2>Search</h2>
+      <form class="search-form" role="search">
+        <input type="search" id="searchInput" name="query">
+        <button type="submit">Search</button>
       </form>
 
-      <hr>
-
-      <div>
-        <h2>Search</h2>
-        <form class="search-form" role="search">
-          <input type="search" id="searchInput" name="query">
-          <button type="submit">Search</button>
-        </form>
-
-        <div class="search-result">
-          <table>
-            <thead>
-              <tr>
-                <th>Date of First Communion</th>
-                <th>Name</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div>
+      <div class="search-result">
+        <table>
+          <thead>
+            <tr>
+              <th>Date of First Communion</th>
+              <th>Name</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
-
     </div>
+
+    <dialog id="infoModal">
+      <article>
+        <header>
+          <button aria-label="Close" rel="prev" id="closeInfoModal"></button>
+          <p><strong>Record Info</strong></p>
+        </header>
+        <p><strong>Name:</strong> <span id="infoName"></span></p>
+        <p><strong>Date of First Communion:</strong> <span id="infoDate"></span></p>
+        <p><strong>Created:</strong> <span id="infoCreatedAt"></span></p>
+      </article>
+    </dialog>
   </main>
 </body>
 

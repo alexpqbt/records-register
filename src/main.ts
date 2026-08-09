@@ -7,6 +7,10 @@ const searchInput = document.getElementById("searchInput") as HTMLInputElement;
 const resultBody = document.querySelector(
   ".search-result tbody",
 ) as HTMLTableSectionElement;
+const infoModal = document.getElementById("infoModal") as HTMLDialogElement;
+const closeInfoModal = document.getElementById(
+  "closeInfoModal",
+) as HTMLButtonElement;
 
 async function submitForm(e: SubmitEvent) {
   e.preventDefault();
@@ -30,7 +34,7 @@ async function submitForm(e: SubmitEvent) {
 
 async function performSearch(query: string) {
   const rows = await db.select<Record<string, any>[]>(
-    "SELECT * FROM records WHERE firstname LIKE ? OR lastname LIKE ? ORDER BY created_at DESC",
+    "SELECT * FROM records WHERE firstname LIKE $1 OR lastname LIKE $2 ORDER BY created_at DESC",
     [`%${query}%`, `%${query}%`],
   );
   renderResults(rows);
@@ -86,10 +90,48 @@ function renderResults(rows: Record<string, any>[]) {
   });
 }
 
+async function openInfoModal(id: string) {
+  const rows = await db.select<Record<string, any>[]>(
+    "SELECT * FROM records WHERE id = ?",
+    [id],
+  );
+  const row = rows[0];
+  if (!row) return;
+
+  document.querySelector("#infoName")!.textContent =
+    `${row.lastname}, ${row.firstname} ${row.middle ?? ""}`;
+  document.querySelector("#infoDate")!.textContent = formatDate(row.dofc);
+  document.querySelector("#infoCreatedAt")!.textContent = formatDate(
+    row.created_at,
+  );
+
+  infoModal?.showModal();
+}
+
 searchInput?.addEventListener("input", (e) => {
   performSearch((e.target as HTMLInputElement).value);
 });
 
 registerForm?.addEventListener("submit", submitForm);
+
+closeInfoModal?.addEventListener("click", () => infoModal?.close());
+
+resultBody?.addEventListener("click", (e) => {
+  const target = (e.target as HTMLElement).closest("button");
+  if (!target) return;
+
+  const id = target.dataset.id;
+  if (!id) return;
+
+  if (target.classList.contains("info-btn")) {
+    openInfoModal(id);
+  }
+});
+
+infoModal?.addEventListener("click", (e) => {
+  if (e.target === infoModal) {
+    infoModal.close();
+  }
+});
 
 performSearch("");
