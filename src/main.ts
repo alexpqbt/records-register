@@ -109,6 +109,16 @@ async function performSearch(query: string) {
 
 function renderResults(rows: Record<string, any>[]) {
   if (!resultBody) return;
+
+  if (rows.length === 0) {
+    resultBody.innerHTML = `
+      <tr>
+        <td colspan="3" class="empty-state">No records found.</td>
+      </tr>
+    `;
+    return;
+  }
+
   resultBody.innerHTML = rows.map(rowToHtml).join("");
 }
 
