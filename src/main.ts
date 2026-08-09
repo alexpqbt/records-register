@@ -11,6 +11,12 @@ const infoModal = document.getElementById("infoModal") as HTMLDialogElement;
 const closeInfoModal = document.getElementById(
   "closeInfoModal",
 ) as HTMLButtonElement;
+const deleteModal = document.getElementById("deleteModal") as HTMLDialogElement;
+const closeDeleteModal = document.getElementById("closeDeleteModal") as HTMLButtonElement;
+const cancelDelete = document.getElementById("cancelDelete") as HTMLButtonElement;
+const confirmDelete = document.getElementById("confirmDelete") as HTMLButtonElement;
+
+let pendingDeleteId: string | null = null;
 
 async function submitForm(e: SubmitEvent) {
   e.preventDefault();
@@ -34,7 +40,7 @@ async function submitForm(e: SubmitEvent) {
 
 async function performSearch(query: string) {
   const rows = await db.select<Record<string, any>[]>(
-    "SELECT * FROM records WHERE firstname LIKE $1 OR lastname LIKE $2 ORDER BY created_at DESC",
+    "SELECT * FROM records WHERE (firstname LIKE $1 OR lastname LIKE $2) AND is_active = 1 ORDER BY created_at DESC",
     [`%${query}%`, `%${query}%`],
   );
   renderResults(rows);
@@ -108,6 +114,19 @@ async function openInfoModal(id: string) {
   infoModal?.showModal();
 }
 
+function openDeleteModal(id: string) {
+  pendingDeleteId = id;
+  deleteModal?.showModal();
+}
+
+async function deleteRecord() {
+  if (!pendingDeleteId) return;
+  await db.execute("UPDATE records SET is_active = 0 WHERE id = $1", [pendingDeleteId]);
+  pendingDeleteId = null;
+  deleteModal?.close();
+  performSearch(searchInput.value);
+}
+
 searchInput?.addEventListener("input", (e) => {
   performSearch((e.target as HTMLInputElement).value);
 });
@@ -125,6 +144,8 @@ resultBody?.addEventListener("click", (e) => {
 
   if (target.classList.contains("info-btn")) {
     openInfoModal(id);
+  } else if (target.classList.contains("delete-btn")) {
+    openDeleteModal(id);
   }
 });
 
@@ -132,6 +153,14 @@ infoModal?.addEventListener("click", (e) => {
   if (e.target === infoModal) {
     infoModal.close();
   }
+});
+
+closeDeleteModal?.addEventListener("click", () => deleteModal?.close());
+cancelDelete?.addEventListener("click", () => deleteModal?.close());
+confirmDelete?.addEventListener("click", deleteRecord);
+
+deleteModal?.addEventListener("click", (e) => {
+  if (e.target === deleteModal) deleteModal.close();
 });
 
 performSearch("");

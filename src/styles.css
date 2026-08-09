@@ -38,6 +38,7 @@ ul {
   border-color: #111111;
 }
 
+#deleteModal #confirmDelete,
 .delete-btn {
   border-color: #D93526;
   background-color: #D93526;
