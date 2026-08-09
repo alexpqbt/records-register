@@ -16,6 +16,16 @@ ul {
   text-overflow: ellipsis;
 }
 
+.search-result {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.search-result thead {
+  position: sticky;
+  top: 0;
+}
+
 .search-result .btn-group {
   display: flex;
   justify-content: flex-end;
