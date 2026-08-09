@@ -48,3 +48,13 @@ ul {
   width: 100%;
   max-width: 900px;
 }
+
+#themeSwitcher {
+  position: absolute;
+  right: 40px;
+  top: 20px;
+}
+
+#themeSwitcher:hover {
+  cursor: pointer;
+}
