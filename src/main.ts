@@ -74,28 +74,37 @@ async function submitForm(e: SubmitEvent) {
   const form = e.target as HTMLFormElement;
   const data = new FormData(form);
 
-  await db.execute(
-    "INSERT INTO records (lastname, firstname, middle, dofc) VALUES ($1, $2, $3, $4);",
-    [
-      data.get("lastname") as string,
-      data.get("firstname") as string,
-      (data.get("middle") as string) || null,
-      data.get("communion-date") as string,
-    ],
-  );
-
-  performSearch("");
-  form.reset();
+  try {
+    await db.execute(
+      "INSERT INTO records (lastname, firstname, middle, dofc) VALUES ($1, $2, $3, $4);",
+      [
+        data.get("lastname") as string,
+        data.get("firstname") as string,
+        (data.get("middle") as string) || null,
+        data.get("communion-date") as string,
+      ],
+    );
+    performSearch("");
+    form.reset();
+  } catch (err) {
+    console.error(err);
+    showError("Could not save the record. Please try again.");
+  }
 }
 
 // ---------- Search / render ----------
 
 async function performSearch(query: string) {
-  const rows = await db.select<Record<string, any>[]>(
-    "SELECT * FROM records WHERE (firstname LIKE $1 OR lastname LIKE $2) AND is_active = 1 ORDER BY created_at DESC",
-    [`%${query}%`, `%${query}%`],
-  );
-  renderResults(rows);
+  try {
+    const rows = await db.select<Record<string, any>[]>(
+      "SELECT * FROM records WHERE (firstname LIKE $1 OR lastname LIKE $2) AND is_active = 1 ORDER BY created_at DESC",
+      [`%${query}%`, `%${query}%`],
+    );
+    renderResults(rows);
+  } catch (err) {
+    console.error(err);
+    showError("Could not load records.");
+  }
 }
 
 function renderResults(rows: Record<string, any>[]) {
@@ -147,10 +156,16 @@ function openDeleteModal(id: string) {
 
 async function deleteRecord() {
   if (!pendingDeleteId) return;
-  await db.execute("UPDATE records SET is_active = 0 WHERE id = $1", [pendingDeleteId]);
-  pendingDeleteId = null;
-  deleteModal.close();
-  performSearch(searchInput.value);
+  try {
+    await db.execute("UPDATE records SET is_active = 0 WHERE id = $1", [pendingDeleteId]);
+    deleteModal.close();
+    performSearch(searchInput.value);
+  } catch (err) {
+    console.error(err);
+    showError("Could not delete the record. Please try again.");
+  } finally {
+    pendingDeleteId = null;
+  }
 }
 
 // ---------- Edit modal ----------
@@ -172,19 +187,23 @@ async function submitEdit(e: SubmitEvent) {
   e.preventDefault();
   const data = new FormData(editForm);
 
-  await db.execute(
-    "UPDATE records SET lastname = $1, firstname = $2, middle = $3, dofc = $4 WHERE id = $5",
-    [
-      data.get("lastname") as string,
-      data.get("firstname") as string,
-      (data.get("middle") as string) || null,
-      data.get("dofc") as string,
-      data.get("id") as string,
-    ],
-  );
-
-  editModal.close();
-  performSearch(searchInput.value);
+  try {
+    await db.execute(
+      "UPDATE records SET lastname = $1, firstname = $2, middle = $3, dofc = $4 WHERE id = $5",
+      [
+        data.get("lastname") as string,
+        data.get("firstname") as string,
+        (data.get("middle") as string) || null,
+        data.get("dofc") as string,
+        data.get("id") as string,
+      ],
+    );
+    editModal.close();
+    performSearch(searchInput.value);
+  } catch (err) {
+    console.error(err);
+    showError("Could not save changes. Please try again.");
+  }
 }
 
 // ---------- Dialog behavior (backdrop click + close button) ----------
@@ -226,6 +245,12 @@ confirmDelete.addEventListener("click", deleteRecord);
 setupDialog(infoModal, closeInfoModal);
 setupDialog(deleteModal, closeDeleteModal);
 setupDialog(editModal, closeEditModal);
+
+// ---------- Error handling ----------
+
+function showError(message: string) {
+  alert(message); 
+}
 
 // ---------- Theme ----------
 
