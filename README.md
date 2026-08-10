@@ -12,12 +12,12 @@ This is a simple CRUD project that register's a person's information for the chu
 ```terminal
 git clone <repo URL>
 pnpm install
-pnpm tauri run dev
+pnpm run tauri dev
 ```
 
 # Building
 
-Run `pnpm tauri build` and the binaries are in
+Run `pnpm install` and `pnpm run tauri build` and the binaries are in
 `src-tauri/target/release`
 
 # Tech Stack
