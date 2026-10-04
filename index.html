@@ -14,58 +14,10 @@
   <main class="container">
     <div id="themeSwitcher" class="secondary"></div>
     <div role="tablist" aria-label="Tab List">
-      <button role="tab" aria-selected="true" aria-controls="panel-2" id="tab-2" tabindex="0">Search</button>
-      <button role="tab" aria-selected="false" aria-controls="panel-1" id="tab-1" tabindex="-1">Add</button>
+      <button role="tab" aria-selected="true" aria-controls="panel-1" id="tab-1" tabindex="0">Search</button>
+      <button role="tab" aria-selected="false" aria-controls="panel-2" id="tab-2" tabindex="-1">Add</button>
     </div>
     <div role="tabpanel" id="panel-1" aria-labelledby="tab-1" tabindex="0">
-      <form class="register-form" id="registerForm">
-        <h4>Candidate Information</h4>
-        <div class="candidate grid">
-          <label>
-            Last Name
-            <input type="text" id="lastname" name="lastname" required>
-          </label>
-          <label>
-            First Name
-            <input type="text" id="firstname" name="firstname" required>
-          </label>
-          <label>
-            <div class="single-line-truncate">Middle Initial/Name</div>
-            <input type="text" id="middle" name="middle">
-          </label>
-        </div>
-        <hr>
-        <h4>Official Information</h4>
-        <div class="official grid">
-          <label>
-            Title
-            <input type="text" id="middle" name="middle">
-          </label>
-          <label>
-            Last Name
-            <input type="text" id="lastname" name="lastname" required>
-          </label>
-          <label>
-            First Name
-            <input type="text" id="firstname" name="firstname" required>
-          </label>
-        </div>
-        <label>
-          Name of School
-          <input type="text" id="firstname" name="firstname" required>
-        </label>
-        <label>
-          <div class="single-line-truncate">Date of First Communion</div>
-          <input type="date" id="communion-date" name="communion-date" required>
-        </label>
-        <div class="grid">
-          <button class="outline secondary" id="clearButton">Clear</button>
-          <button type="submit">Register</button>
-        </div>
-      </form>
-    </div>
-
-    <div role="tabpanel" id="panel-2" aria-labelledby="tab-2" tabindex="0" hidden>
       <div>
         <form class="search-form" role="search">
           <input type="search" id="searchInput" name="query">
@@ -140,6 +92,55 @@
         </article>
       </dialog>
     </div>
+
+    <div role="tabpanel" id="panel-2" aria-labelledby="tab-2" tabindex="0" hidden>
+      <form class="register-form" id="registerForm">
+        <h4>Candidate Information</h4>
+        <div class="candidate grid">
+          <label>
+            Last Name
+            <input type="text" id="lastname" name="lastname" required>
+          </label>
+          <label>
+            First Name
+            <input type="text" id="firstname" name="firstname" required>
+          </label>
+          <label>
+            <div class="single-line-truncate">Middle Initial/Name</div>
+            <input type="text" id="middle" name="middle">
+          </label>
+        </div>
+        <hr>
+        <h4>Official Information</h4>
+        <div class="official grid">
+          <label>
+            Title
+            <input type="text" id="middle" name="middle">
+          </label>
+          <label>
+            Last Name
+            <input type="text" id="lastname" name="lastname" required>
+          </label>
+          <label>
+            First Name
+            <input type="text" id="firstname" name="firstname" required>
+          </label>
+        </div>
+        <label>
+          Name of School
+          <input type="text" id="firstname" name="firstname" required>
+        </label>
+        <label>
+          <div class="single-line-truncate">Date of First Communion</div>
+          <input type="date" id="communion-date" name="communion-date" required>
+        </label>
+        <div class="grid">
+          <button class="outline secondary" id="clearButton">Clear</button>
+          <button type="submit">Register</button>
+        </div>
+      </form>
+    </div>
+
   </main>
   <div id="toastContainer"></div>
 </body>
