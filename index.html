@@ -69,7 +69,8 @@
           </header>
           <form id="editForm">
             <input type="hidden" id="editId" name="id">
-            <div class="grid">
+            <h4>Candidate Information</h4>
+            <div class="candidate grid">
               <label>
                 Last Name
                 <input type="text" id="editLastname" name="lastname" required>
@@ -82,12 +83,35 @@
                 Middle
                 <input type="text" id="editMiddle" name="middle">
               </label>
+            </div>
+            <hr>
+            <h4>Official Information</h4>
+            <div class="official grid">
               <label>
-                <div class="single-line-truncate">Date of First Communion</div>
-                <input type="date" id="editDofc" name="dofc" required>
+                Title
+                <input type="text" id="middle" name="middle">
+              </label>
+              <label>
+                Last Name
+                <input type="text" id="lastname" name="lastname" required>
+              </label>
+              <label>
+                First Name
+                <input type="text" id="firstname" name="firstname" required>
               </label>
             </div>
-            <button type="submit">Save Changes</button>
+            <label>
+              Name of School
+              <input type="text" id="firstname" name="firstname" required>
+            </label>
+            <label>
+              <div class="single-line-truncate">Date of First Communion</div>
+              <input type="date" id="editDofc" name="dofc" required>
+            </label>
+            <div class="grid">
+              <button type="button" class="outline secondary">Clear</button>
+              <button type="submit">Save Changes</button>
+            </div>
           </form>
         </article>
       </dialog>
