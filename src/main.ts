@@ -49,8 +49,15 @@ function formatDate(isoDate: string): string {
   });
 }
 
+function toTitleCase(s: string): string {
+  return s
+    .trim()
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 function formatFullName(row: Record<string, any>): string {
-  return `${row.lastname}, ${row.firstname} ${row.middle ?? ""}`.trim();
+  return `${toTitleCase(row.lastname)}, ${toTitleCase(row.firstname)} ${toTitleCase(row.middle ?? "")}`.trim();
 }
 
 // ---------- Icons ----------
