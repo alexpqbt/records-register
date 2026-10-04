@@ -16,6 +16,8 @@ const registerForm = $<HTMLFormElement>("registerForm");
 const searchInput = $<HTMLInputElement>("searchInput");
 const resultBody = document.querySelector(".search-result tbody") as HTMLTableSectionElement;
 
+const clearButton = $<HTMLButtonElement>("clearButton");
+
 const infoModal = $<HTMLDialogElement>("infoModal");
 const closeInfoModal = $<HTMLButtonElement>("closeInfoModal");
 
@@ -300,6 +302,8 @@ function setupDialog(dialog: HTMLDialogElement, closeBtn: HTMLButtonElement) {
 
 registerForm.addEventListener("submit", submitForm);
 editForm.addEventListener("submit", submitEdit);
+
+clearButton.addEventListener("click", () => registerForm.reset());
 
 searchInput.addEventListener("input", (e) => {
   performSearch((e.target as HTMLInputElement).value);
