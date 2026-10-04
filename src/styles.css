@@ -1,7 +1,53 @@
+:root {
+  --pico-font-size: 90%;
+}
+
+[role="tablist"] {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--pico-muted-border-color, #ccc);
+  margin-bottom: 2em;
+}
+
+[role="tab"] {
+  background: transparent;
+  border: none;
+  --pico-border-radius: 0px;
+  border-bottom: 2px solid transparent;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  color: var(--pico-muted-color, #666);
+  font: inherit;
+}
+
+[role="tab"][aria-selected="true"] {
+  color: var(--pico-primary, #000);
+  border-bottom-color: var(--pico-primary, #000);
+  font-weight: 600;
+}
+
+[role="tab"]:focus-visible {
+  outline: 2px solid var(--pico-primary, #000);
+  outline-offset: 2px;
+}
+
+[role="tabpanel"] {
+  padding: 1rem 0;
+}
+
+[role="tabpanel"][hidden] {
+  display: none;
+}
+
 ul {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+}
+
+.register-form {
+  width: 67%;
+  margin: 0 auto;
 }
 
 .register-form button {
@@ -53,6 +99,7 @@ ul {
   position: absolute;
   right: 2rem;
   top: 1rem;
+  z-index: 1;
 }
 
 #themeSwitcher:hover {
