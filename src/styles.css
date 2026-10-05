@@ -50,11 +50,6 @@ ul {
   margin: 0 auto;
 }
 
-.register-form button {
-  margin-top: 1.7em;
-  height: 50%;
-}
-
 .single-line-truncate {
   width: 90%;            
   white-space: nowrap;    
@@ -136,4 +131,19 @@ ul {
 .toast.show {
   opacity: 1;
   transform: translateY(0);
+}
+
+.school label,
+.official label {
+  margin-bottom: 0;
+  grid-column: span 5;
+}
+
+.school button,
+.official button {
+  align-self: end;
+}
+
+.school {
+  margin-bottom: 1em;
 }

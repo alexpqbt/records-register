@@ -12,17 +12,23 @@
 
 <body>
   <main class="container">
+
     <div id="themeSwitcher" class="secondary"></div>
+
     <div role="tablist" aria-label="Tab List">
       <button role="tab" aria-selected="true" aria-controls="panel-1" id="tab-1" tabindex="0">Search</button>
       <button role="tab" aria-selected="false" aria-controls="panel-2" id="tab-2" tabindex="-1">Add</button>
     </div>
+
     <div role="tabpanel" id="panel-1" aria-labelledby="tab-1" tabindex="0">
+
       <div>
+
         <form class="search-form" role="search">
           <input type="search" id="searchInput" name="query">
           <button type="submit">Search</button>
         </form>
+
         <div class="search-result">
           <table>
             <thead>
@@ -35,79 +41,94 @@
             <tbody></tbody>
           </table>
         </div>
+
       </div>
+
       <dialog id="infoModal">
         <article>
           <header>
             <button aria-label="Close" rel="prev" id="closeInfoModal"></button>
             <p><strong>Record Info</strong></p>
           </header>
+
           <p><strong>Name:</strong> <span id="infoName"></span></p>
+
           <p><strong>Date of First Communion:</strong> <span id="infoDate"></span></p>
+
           <p><strong>Created:</strong> <span id="infoCreatedAt"></span></p>
         </article>
       </dialog>
+
       <dialog id="deleteModal">
         <article>
           <header>
             <button aria-label="Close" rel="prev" id="closeDeleteModal"></button>
             <p><strong>Delete Record</strong></p>
           </header>
+
           <p>Are you sure you want to delete this record?</p>
+
           <p><strong>THIS CANNOT BE UNDONE.</strong></p>
+
           <footer>
             <button id="cancelDelete" class="secondary">Cancel</button>
             <button id="confirmDelete">Delete</button>
           </footer>
         </article>
       </dialog>
+
       <dialog id="editModal">
         <article>
           <header>
             <button aria-label="Close" rel="prev" id="closeEditModal"></button>
             <p><strong>Edit Record</strong></p>
           </header>
+
           <form id="editForm">
             <input type="hidden" id="editId" name="id">
-            <h4>Candidate Information</h4>
+
+            <h4>Candidate</h4>
+
             <div class="candidate grid">
               <label>
                 Last Name
                 <input type="text" id="editLastname" name="lastname" required>
               </label>
+
               <label>
                 First Name
                 <input type="text" id="editFirstname" name="firstname" required>
               </label>
+
               <label>
                 Middle
                 <input type="text" id="editMiddle" name="middle">
               </label>
             </div>
+
             <hr>
-            <h4>Official Information</h4>
-            <div class="official grid">
-              <label>
-                Title
-                <input type="text" id="middle" name="middle">
-              </label>
-              <label>
-                Last Name
-                <input type="text" id="lastname" name="lastname" required>
-              </label>
-              <label>
-                First Name
-                <input type="text" id="firstname" name="firstname" required>
-              </label>
-            </div>
+
             <label>
-              Name of School
-              <input type="text" id="firstname" name="firstname" required>
-            </label>
-            <label>
-              <div class="single-line-truncate">Date of First Communion</div>
+              <h4 class="single-line-truncate">Date of First Communion</h4>
               <input type="date" id="editDofc" name="dofc" required>
             </label>
+
+            <label>
+              <h4>Official</h4>
+
+              <select name="official_id" id="editOfficialSelect">
+                <option value="">-- None --</option>
+              </select>
+            </label>
+
+            <label>
+              <h4>School</h4>
+
+              <select name="school_id" id="editSchoolSelect">
+                <option value="">-- None --</option>
+              </select>
+            </label>
+
             <div class="grid">
               <button type="button" class="outline secondary" data-clear>Clear</button>
               <button type="submit">Save Changes</button>
@@ -115,57 +136,73 @@
           </form>
         </article>
       </dialog>
+
     </div>
 
     <div role="tabpanel" id="panel-2" aria-labelledby="tab-2" tabindex="0" hidden>
       <form class="register-form" id="registerForm">
-        <h4>Candidate Information</h4>
+
+        <h4>Candidate</h4>
+
         <div class="candidate grid">
           <label>
             Last Name
             <input type="text" id="lastname" name="lastname" required>
           </label>
+
           <label>
             First Name
             <input type="text" id="firstname" name="firstname" required>
           </label>
+
           <label>
             <div class="single-line-truncate">Middle Initial/Name</div>
             <input type="text" id="middle" name="middle">
           </label>
         </div>
+
         <hr>
-        <h4>Official Information</h4>
-        <div class="official grid">
-          <label>
-            Title
-            <input type="text" id="middle" name="middle">
-          </label>
-          <label>
-            Last Name
-            <input type="text" id="lastname" name="lastname" required>
-          </label>
-          <label>
-            First Name
-            <input type="text" id="firstname" name="firstname" required>
-          </label>
-        </div>
+
         <label>
-          Name of School
-          <input type="text" id="firstname" name="firstname" required>
-        </label>
-        <label>
-          <div class="single-line-truncate">Date of First Communion</div>
+          <h4 class="single-line-truncate">Date of First Communion</h4>
           <input type="date" id="communion-date" name="communion-date" required>
         </label>
+
+        <div class="official grid">
+          <label>
+            <h4>Official</h4>
+
+            <select name="official_id" id="officialSelect">
+              <option value="">-- None --</option>
+            </select>
+          </label>
+
+          <button type="button" class="add-official">Add</button>
+        </div>
+
+        <div class="school grid">
+          <label>
+            <h4>School</h4>
+
+            <select name="school_id" id="schoolSelect">
+              <option value="">-- None --</option>
+            </select>
+          </label>
+
+          <button type="button" class="add-school">Add</button>
+        </div>
+
         <div class="grid">
           <button type="button" class="outline secondary" id="clearButton" data-clear>Clear</button>
-          <button type="submit">Register</button>
+          <button type="submit" class="primary">Register</button>
         </div>
+
       </form>
+
     </div>
 
   </main>
+
   <div id="toastContainer"></div>
 </body>
 
