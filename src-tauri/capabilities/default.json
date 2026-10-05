@@ -10,9 +10,28 @@
     "opener:default",
     "sql:default",
     "sql:allow-execute",
-    "fs:default", {
+    "fs:default", 
+    {
       "identifier": "fs:allow-copy-file",
-      "allow": [{ "path": "$APPDATA/*" }]
+      "allow": [
+        { "path": "$APPDATA/*" },
+        { "path": "$APPDATA/backups" },
+        { "path": "$APPDATA/backups/**" }
+      ]
+    },
+    {
+      "identifier": "fs:allow-exists",
+      "allow": [
+        { "path": "$APPDATA/backups" },
+        { "path": "$APPDATA/backups/**" }
+      ]
+    },
+    {
+      "identifier": "fs:allow-mkdir",
+      "allow": [
+        { "path": "$APPDATA/backups" },
+        { "path": "$APPDATA/backups/**" }
+      ]
     }
   ]
 }

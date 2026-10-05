@@ -3,4 +3,5 @@
 
 fn main() {
     baptismal_records_lib::run();
+    println!("cargo:rerun-if-changed=migrations");
 }
