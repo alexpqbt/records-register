@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "SHJP Baptismal Records",
+  "productName": "SHJP First Communion Records",
   "version": "0.1.0",
-  "identifier": "com.andre.baptismal-records",
+  "identifier": "com.andre.communion-records",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",
@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "SHJP Baptismal Records",
+        "title": "SHJP First Communion Records",
         "resizable": true,
         "width": 1280,
         "height": 720
@@ -47,7 +47,7 @@
     },
     "publisher": "Alexandre Paquibot",
     "copyright": "Copyright © 2026",
-    "shortDescription": "Baptismal and First Communion records register",
-    "longDescription": "Offline record-keeping tool for parish baptismal and first communion entries."
+    "shortDescription": "First Communion records register",
+    "longDescription": "Offline record-keeping tool for parish first communion entries."
   }
 }
