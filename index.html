@@ -183,7 +183,7 @@
             </select>
           </label>
 
-          <button type="button" class="add-official">Add</button>
+          <button type="button" class="add-official" id="addOfficial">Add</button>
         </div>
 
         <div class="school grid">
@@ -195,7 +195,7 @@
             </select>
           </label>
 
-          <button type="button" class="add-school">Add</button>
+          <button type="button" class="add-school" id="addSchool">Add</button>
         </div>
 
         <div class="grid">
@@ -206,6 +206,56 @@
       </form>
 
     </div>
+
+    <!-- Add Official -->
+    <dialog id="officialModal">
+      <article>
+        <header>
+          <button aria-label="Close" rel="prev" id="closeOfficialModal"></button>
+          <p><strong>Official Info</strong></p>
+        </header>
+        <form id="officialForm">
+          <div class="grid">
+            <label>
+              Title
+              <input type="text" name="official-title" id="officialTitle">
+            </label>
+            <label>
+              First Name
+              <input type="text" name="official-firstname" id="officialFirstname">
+            </label>
+            <label>
+              Last Name
+              <input type="text" name="official-lastname" id="officialLastname">
+            </label>
+          </div>
+          <div class="grid">
+            <button type="button" class="outline secondary" id="clearButton" data-clear>Clear</button>
+            <button type="submit" class="primary">Add Official</button>
+          </div>
+        </form>
+      </article>
+    </dialog>
+
+    <!-- School Modal -->
+    <dialog id="schoolModal">
+      <article>
+        <header>
+          <button aria-label="Close" rel="prev" id="closeSchoolModal"></button>
+          <p><strong>School Info</strong></p>
+        </header>
+        <form>
+          <label>
+            School Name
+            <input type="text" name="school-name" id="schoolName">
+          </label>
+          <div class="grid">
+            <button type="button" class="outline secondary" id="clearButton" data-clear>Clear</button>
+            <button type="submit" class="primary">Add School</button>
+          </div>
+        </form>
+      </article>
+    </dialog>
 
   </main>
 

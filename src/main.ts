@@ -41,6 +41,14 @@ const toastContainer = $<HTMLDivElement>("toastContainer");
 
 const tablists = document.querySelectorAll<HTMLElement>('[role="tablist"]');
 
+const addOfficial = $<HTMLButtonElement>("addOfficial");
+const officialModal = $<HTMLDialogElement>("officialModal");
+const closeOfficialModal = $<HTMLButtonElement>("closeOfficialModal");
+
+const addSchool = $<HTMLButtonElement>("addSchool");
+const schoolModal = $<HTMLDialogElement>("schoolModal");
+const closeSchoolModal = $<HTMLButtonElement>("closeSchoolModal");
+
 let pendingDeleteId: string | null = null;
 
 // ---------- Tab Switching ----------
@@ -294,9 +302,17 @@ resultBody.addEventListener("click", (e) => {
 cancelDelete.addEventListener("click", () => deleteModal.close());
 confirmDelete.addEventListener("click", deleteRecord);
 
+// TODO: Add db logic
+addOfficial.addEventListener("click", () => officialModal.showModal());
+
+// TODO: Add db logic
+addSchool.addEventListener("click", () => schoolModal.showModal());
+
 setupDialog(infoModal, closeInfoModal);
 setupDialog(deleteModal, closeDeleteModal);
 setupDialog(editModal, closeEditModal);
+setupDialog(officialModal, closeOfficialModal);
+setupDialog(schoolModal, closeSchoolModal);
 
 // ---------- Toast ----------
 
