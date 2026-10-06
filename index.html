@@ -14,21 +14,22 @@
   <main class="container">
 
     <div id="themeSwitcher" class="secondary"></div>
-
+    <!-- Tab List -->
     <div role="tablist" aria-label="Tab List">
       <button role="tab" aria-selected="true" aria-controls="panel-1" id="tab-1" tabindex="0">Search</button>
       <button role="tab" aria-selected="false" aria-controls="panel-2" id="tab-2" tabindex="-1">Add</button>
     </div>
-
+    <!-- Panel 1 -->
     <div role="tabpanel" id="panel-1" aria-labelledby="tab-1" tabindex="0">
 
-      <div>
-
+      <div class="search">
+        <!-- Search Form -->
         <form class="search-form" role="search">
           <input type="search" id="searchInput" name="query">
           <button type="submit">Search</button>
         </form>
 
+        <!-- Search Result -->
         <div class="search-result">
           <table>
             <thead>
@@ -44,6 +45,7 @@
 
       </div>
 
+      <!-- Information Modal -->
       <dialog id="infoModal">
         <article>
           <header>
@@ -59,6 +61,7 @@
         </article>
       </dialog>
 
+      <!-- Delete Modal -->
       <dialog id="deleteModal">
         <article>
           <header>
@@ -77,6 +80,7 @@
         </article>
       </dialog>
 
+      <!-- Edit Modal -->
       <dialog id="editModal">
         <article>
           <header>
@@ -139,6 +143,8 @@
 
     </div>
 
+    <!-- Panel 2 -->
+    <!-- Register Form -->
     <div role="tabpanel" id="panel-2" aria-labelledby="tab-2" tabindex="0" hidden>
       <form class="register-form" id="registerForm">
 
@@ -203,6 +209,7 @@
 
   </main>
 
+  <!-- Toast -->
   <div id="toastContainer"></div>
 </body>
 
