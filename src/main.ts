@@ -4,7 +4,9 @@ import { appDataDir, join } from "@tauri-apps/api/path";
 
 // ---------- Setup ----------
 
-const db = await Database.load("sqlite:baptismal_records.db");
+const dbName = "baptismal_records.db"
+
+const db = await Database.load(`sqlite:${dbName}`);
 
 function $<T extends HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
@@ -388,7 +390,7 @@ async function runAutoBackupIfDue() {
     if (lastBackup && now - Number(lastBackup) < THIRTY_DAYS) return;
 
     const dbDir = await appDataDir();
-    const dbPath = await join(dbDir, "baptismal_records.db");
+    const dbPath = await join(dbDir, dbName);
     const backupDir = await join(dbDir, "backups");
 
     if (!(await exists(backupDir))) {
