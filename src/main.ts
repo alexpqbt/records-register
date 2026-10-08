@@ -4,10 +4,10 @@ import {
   formatDate,
   formatFullName,
   showError,
-} from './scripts/util';
+} from './scripts/utils';
 import { icon } from './scripts/icons';
-import { tabSwitcher } from "./scripts/tab-switching";
-import { runAutoBackupIfDue } from "./scripts/auto-backup";
+import { tabSwitcher } from "./scripts/tabs";
+import { runAutoBackupIfDue } from "./scripts/backup";
 import { showToast } from "./scripts/toast";
 import { initTheme, applyTheme, toggleTheme } from "./scripts/theme";
 
