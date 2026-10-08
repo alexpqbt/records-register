@@ -8,6 +8,7 @@ import {
 import { icon } from './scripts/icons';
 import { tabSwitcher } from "./scripts/tab-switching";
 import { runAutoBackupIfDue } from "./scripts/auto-backup";
+import { showToast } from "./scripts/toast";
 
 // ---------- Setup ----------
 
@@ -71,7 +72,7 @@ async function submitForm(e: SubmitEvent) {
     );
     performSearch("");
     form.reset();
-    showToast("Record added.");
+    showToast(toastContainer, "Record added.");
   } catch (err) {
     console.error(err);
     showError("Could not save the record. Please try again.");
@@ -156,7 +157,7 @@ async function deleteRecord() {
     await db.execute("UPDATE records SET is_active = 0 WHERE id = $1", [pendingDeleteId]);
     deleteModal.close();
     performSearch(searchInput.value);
-    showToast("Record deleted.");
+    showToast(toastContainer, "Record deleted.");
   } catch (err) {
     console.error(err);
     showError("Could not delete the record.");
@@ -197,7 +198,7 @@ async function submitEdit(e: SubmitEvent) {
     );
     editModal.close();
     performSearch(searchInput.value);
-    showToast("Record updated.");
+    showToast(toastContainer, "Record updated.");
   } catch (err) {
     console.error(err);
     showError("Could not save changes.");
@@ -259,22 +260,6 @@ setupDialog(deleteModal, closeDeleteModal);
 setupDialog(editModal, closeEditModal);
 setupDialog(officialModal, closeOfficialModal);
 setupDialog(schoolModal, closeSchoolModal);
-
-// ---------- Toast ----------
-
-function showToast(message: string) {
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  toast.textContent = message;
-  toastContainer.appendChild(toast);
-
-  requestAnimationFrame(() => toast.classList.add("show"));
-
-  setTimeout(() => {
-    toast.classList.remove("show");
-    toast.addEventListener("transitionend", () => toast.remove(), { once: true });
-  }, 2500);
-}
 
 // ---------- Theme ----------
 
