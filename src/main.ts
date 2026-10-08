@@ -346,7 +346,6 @@ function applyTheme(theme: "light" | "dark") {
 
 function toggleTheme() {
   const next = html.dataset.theme === "light" ? "dark" : "light";
-  themeSwitcher.innerHTML = html.dataset.theme === "light" ? icon("dark") : icon("light");
   applyTheme(next);
 }
 
