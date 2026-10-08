@@ -9,6 +9,7 @@ import { icon } from './scripts/icons';
 import { tabSwitcher } from "./scripts/tab-switching";
 import { runAutoBackupIfDue } from "./scripts/auto-backup";
 import { showToast } from "./scripts/toast";
+import { initTheme, applyTheme, toggleTheme } from "./scripts/theme";
 
 // ---------- Setup ----------
 
@@ -263,16 +264,7 @@ setupDialog(schoolModal, closeSchoolModal);
 
 // ---------- Theme ----------
 
-function applyTheme(theme: "light" | "dark") {
-  html.dataset.theme = theme;
-  localStorage.setItem("theme", theme);
-  themeSwitcher.innerHTML = theme === "light" ? icon("light") : icon("dark");
-}
-
-function toggleTheme() {
-  const next = html.dataset.theme === "light" ? "dark" : "light";
-  applyTheme(next);
-}
+initTheme(html, themeSwitcher);
 
 themeSwitcher.addEventListener("click", toggleTheme);
 
