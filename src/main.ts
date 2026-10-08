@@ -3,6 +3,7 @@ import {
   $,
   formatDate,
   formatFullName,
+  showError,
 } from './scripts/util';
 import { icon } from './scripts/icons';
 import { tabSwitcher } from "./scripts/tab-switching";
@@ -273,12 +274,6 @@ function showToast(message: string) {
     toast.classList.remove("show");
     toast.addEventListener("transitionend", () => toast.remove(), { once: true });
   }, 2500);
-}
-
-// ---------- Error handling ----------
-
-function showError(message: string) {
-  alert(message); 
 }
 
 // ---------- Theme ----------

@@ -20,3 +20,7 @@ export function toTitleCase(s: string): string {
 export function formatFullName(row: Record<string, any>): string {
   return `${toTitleCase(row.lastname)}, ${toTitleCase(row.firstname)} ${toTitleCase(row.middle ?? "")}`.trim();
 }
+
+export function showError(message: string) {
+  alert(message); 
+}
