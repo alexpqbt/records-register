@@ -1,12 +1,12 @@
 import Database from "@tauri-apps/plugin-sql";
-import { exists, copyFile, mkdir } from "@tauri-apps/plugin-fs";
-import { appDataDir, join } from "@tauri-apps/api/path";
 import {
   $,
   formatDate,
   formatFullName,
 } from './scripts/util';
 import { icon } from './scripts/icons';
+import { tabSwitcher } from "./scripts/tab-switching";
+import { runAutoBackupIfDue } from "./scripts/auto-backup";
 
 // ---------- Setup ----------
 
@@ -50,63 +50,6 @@ const schoolModal = $<HTMLDialogElement>("schoolModal");
 const closeSchoolModal = $<HTMLButtonElement>("closeSchoolModal");
 
 let pendingDeleteId: string | null = null;
-
-// ---------- Tab Switching ----------
-
-tablists.forEach((tablist) => {
-  const tabs = Array.from(
-    tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]')
-  );
-
-  function activate(tab: HTMLButtonElement): void {
-    tabs.forEach((t) => {
-      const selected = t === tab;
-      t.setAttribute('aria-selected', String(selected));
-      t.tabIndex = selected ? 0 : -1;
-
-      const panelId = t.getAttribute('aria-controls');
-      if (!panelId) return;
-
-      const panel = document.getElementById(panelId);
-      if (panel) panel.hidden = !selected;
-    });
-    tab.focus();
-  }
-
-  // Click
-  tabs.forEach((tab) => {
-    tab.addEventListener('click', () => activate(tab));
-  });
-
-  // Keyboard navigation (WAI-ARIA pattern)
-  tablist.addEventListener('keydown', (e: KeyboardEvent) => {
-    const active = document.activeElement;
-    if (!(active instanceof HTMLButtonElement)) return;
-
-    const current = tabs.indexOf(active);
-    if (current === -1) return;
-
-    let next: HTMLButtonElement | null = null;
-    switch (e.key) {
-      case 'ArrowRight':
-        next = tabs[(current + 1) % tabs.length];
-        break;
-      case 'ArrowLeft':
-        next = tabs[(current - 1 + tabs.length) % tabs.length];
-        break;
-      case 'Home':
-        next = tabs[0];
-        break;
-      case 'End':
-        next = tabs[tabs.length - 1];
-        break;
-      default:
-        return;
-    }
-    e.preventDefault();
-    activate(next);
-  });
-});
 
 // ---------- Register ----------
 
@@ -276,6 +219,8 @@ function setupDialog(dialog: HTMLDialogElement, closeBtn: HTMLButtonElement) {
 
 // ---------- Event wiring ----------
 
+tablists.forEach((tablist) => tabSwitcher(tablist));
+
 registerForm.addEventListener("submit", submitForm);
 editForm.addEventListener("submit", submitEdit);
 
@@ -353,35 +298,7 @@ themeSwitcher.addEventListener("click", toggleTheme);
 
 applyTheme((localStorage.getItem("theme") as "light" | "dark") ?? "light");
 
-// ---------- Auto Backup ----------
-
-async function runAutoBackupIfDue() {
-  try {
-    const lastBackup = localStorage.getItem("lastAutoBackup");
-    const now = Date.now();
-    const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
-
-    if (lastBackup && now - Number(lastBackup) < THIRTY_DAYS) return;
-
-    const dbDir = await appDataDir();
-    const dbPath = await join(dbDir, dbName);
-    const backupDir = await join(dbDir, "backups");
-
-    if (!(await exists(backupDir))) {
-      await mkdir(backupDir);
-    }
-
-    const timestamp = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-    const backupPath = await join(backupDir, `backup_${timestamp}.db`);
-
-    await copyFile(dbPath, backupPath);
-    localStorage.setItem("lastAutoBackup", String(now));
-  } catch (err) {
-    console.error("Auto-backup failed:", err);
-  }
-}
-
 // ---------- Init ----------
 
 performSearch("");
-runAutoBackupIfDue();
+runAutoBackupIfDue(dbName);
