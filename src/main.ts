@@ -10,12 +10,11 @@ import { tabSwitcher } from "./scripts/tabs";
 import { runAutoBackupIfDue } from "./scripts/backup";
 import { showToast } from "./scripts/toast";
 import { initTheme, applyTheme, toggleTheme } from "./scripts/theme";
+import { DB_NAME } from "./scripts/constants";
 
 // ---------- Setup ----------
 
-const dbName = "baptismal_records.db"
-
-const db = await Database.load(`sqlite:${dbName}`);
+const db = await Database.load(`sqlite:${DB_NAME}`);
 
 // ---------- DOM references ----------
 
@@ -273,4 +272,4 @@ applyTheme((localStorage.getItem("theme") as "light" | "dark") ?? "light");
 // ---------- Init ----------
 
 performSearch("");
-runAutoBackupIfDue(dbName);
+runAutoBackupIfDue(DB_NAME);
