@@ -46,6 +46,7 @@ const tablists = document.querySelectorAll<HTMLElement>('[role="tablist"]');
 const addOfficial = $<HTMLButtonElement>("addOfficial");
 const officialModal = $<HTMLDialogElement>("officialModal");
 const closeOfficialModal = $<HTMLButtonElement>("closeOfficialModal");
+const officialForm = $<HTMLFormElement>("officialForm");
 
 const addSchool = $<HTMLButtonElement>("addSchool");
 const schoolModal = $<HTMLDialogElement>("schoolModal");
@@ -205,6 +206,40 @@ async function submitEdit(e: SubmitEvent) {
   }
 }
 
+// ---------- Official modal ----------
+
+async function saveOfficial(title: string, firstname: string, lastname: string): Promise<void> {
+  await db.execute(
+    "INSERT INTO official (title, firstname, lastname) VALUES ($1, $2, $3);",
+    [title, firstname, lastname],
+  );
+}
+
+async function submitOfficial(e: SubmitEvent) {
+  e.preventDefault();
+  const form = e.target as HTMLFormElement;
+  const data = new FormData(form);
+
+  const title = ((data.get("official-title") as string) ?? "").trim();
+  const firstname = ((data.get("official-firstname") as string) ?? "").trim();
+  const lastname = ((data.get("official-lastname") as string) ?? "").trim();
+
+  if (!firstname || !lastname) {
+    showError("First name and last name are required.");
+    return;
+  }
+
+  try {
+    await saveOfficial(title, firstname, lastname);
+    form.reset();
+    officialModal.close();
+    showToast(toastContainer, "Official added.");
+  } catch (err) {
+    console.error(err);
+    showError("Could not save the official. Please try again.");
+  }
+}
+
 // ---------- Dialog behavior (backdrop click + close button) ----------
 
 function setupDialog(dialog: HTMLDialogElement, closeBtn: HTMLButtonElement) {
@@ -225,6 +260,7 @@ tablists.forEach((tablist) => tabSwitcher(tablist));
 
 registerForm.addEventListener("submit", submitForm);
 editForm.addEventListener("submit", submitEdit);
+officialForm.addEventListener("submit", submitOfficial);
 
 clearButton.forEach((btn) => {
   btn.addEventListener("click", () => {
