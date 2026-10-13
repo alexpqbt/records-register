@@ -56,6 +56,8 @@ const schoolModal = $<HTMLDialogElement>("schoolModal");
 const closeSchoolModal = $<HTMLButtonElement>("closeSchoolModal");
 const schoolForm = $<HTMLFormElement>("schoolForm");
 
+const sortHeaders = document.querySelectorAll<HTMLTableCellElement>("th[data-sort]");
+
 let pendingDeleteId: string | null = null;
 
 // ---------- Register ----------
@@ -89,34 +91,44 @@ async function submitForm(e: SubmitEvent) {
 
 // ---------- Search / render ----------
 
-const SEARCH_SQL = `
-  SELECT
-    r.id,
-    r.lastname,
-    r.firstname,
-    r.middle,
-    r.dofc,
-    r.created_at,
-    r.official_id,
-    r.school_id,
-    o.title     AS o_title,
-    o.firstname AS o_firstname,
-    o.lastname  AS o_lastname,
-    s.name      AS s_name
-  FROM records r
-  LEFT JOIN official o ON o.id = r.official_id
-  LEFT JOIN school   s ON s.id = r.school_id
-  WHERE (r.firstname LIKE $1 OR r.lastname LIKE $2)
-    AND r.is_active = 1
-  ORDER BY r.created_at DESC
+const SEARCH_BLOB = `
+  COALESCE(r.firstname,'') || ' ' ||
+  COALESCE(r.middle,'')    || ' ' ||
+  COALESCE(r.lastname,'')  || ' ' ||
+  COALESCE(r.dofc,'')      || ' ' ||
+  COALESCE(o.title,'')     || ' ' ||
+  COALESCE(o.firstname,'') || ' ' ||
+  COALESCE(o.lastname,'')  || ' ' ||
+  COALESCE(s.name,'')
 `;
 
 async function performSearch(query: string) {
+  const tokens = query.trim().split(/\s+/).filter(Boolean);
+
+  const tokenClauses = tokens
+    .map((_, i) => `(${SEARCH_BLOB}) LIKE $${i + 1}`)
+    .join(" AND ");
+
+  const dir = sortDir.toUpperCase();
+  const orderBy = `ORDER BY ${SORT_COLUMNS[sortKey].map((c) => `${c} ${dir}`).join(", ")}, r.id DESC`;
+
+  const sql = `
+    SELECT
+      r.*,
+      o.title     AS o_title,
+      o.firstname AS o_firstname,
+      o.lastname  AS o_lastname,
+      s.name      AS s_name
+    FROM records r
+    LEFT JOIN official o ON o.id = r.official_id
+    LEFT JOIN school   s ON s.id = r.school_id
+    WHERE r.is_active = 1
+      ${tokens.length ? "AND " + tokenClauses : ""}
+    ${orderBy}
+  `;
+
   try {
-    const rows = await db.select<Record<string, any>[]>(SEARCH_SQL, [
-      `%${query}%`,
-      `%${query}%`,
-    ]);
+    const rows = await db.select<Record<string, any>[]>(sql, tokens.map((t) => `%${t}%`));
     renderResults(rows);
   } catch (err) {
     console.error(err);
@@ -171,6 +183,46 @@ async function fetchRecord(id: string): Promise<Record<string, any> | undefined>
   );
   return rows[0];
 }
+
+// ---------- Sort by header ----------
+
+type SortKey = "dofc" | "name" | "official" | "school";
+
+let sortKey: SortKey = "dofc";
+let sortDir: "asc" | "desc" = "desc";
+
+const SORT_COLUMNS: Record<SortKey, string[]> = {
+  dofc:     ["r.dofc"],
+  name:     ["r.lastname", "r.firstname"],
+  official: ["o.lastname", "o.firstname", "o.title"],
+  school:   ["s.name"],
+};
+
+function updateSortIndicators() {
+  sortHeaders.forEach((th) => {
+    const isActive = th.dataset.sort === sortKey;
+    th.setAttribute("aria-sort",
+      isActive ? (sortDir === "asc" ? "ascending" : "descending") : "none");
+    th.classList.toggle("sort-active", isActive);
+    th.dataset.dir = isActive ? sortDir : "";
+  });
+}
+
+sortHeaders.forEach((th) => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.sort as SortKey;
+
+    if (sortKey === key) {
+      sortDir = sortDir === "asc" ? "desc" : "asc";
+    } else {
+      sortKey = key;
+      sortDir = "asc";
+    }
+
+    updateSortIndicators();
+    performSearch(searchInput.value);
+  });
+});
 
 // ---------- Info modal ----------
 

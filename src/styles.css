@@ -203,3 +203,31 @@ ul {
     transition: none;
   }
 }
+
+.search-result th[data-sort] {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  position: relative;
+}
+
+.search-result th[data-sort]:hover {
+  color: var(--pico-primary);
+}
+
+/* Arrow via pseudo-element so it doesn't shift text */
+.search-result th[data-sort]::after {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  margin-left: 0.35em;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.search-result th.sort-active::after {
+  opacity: 1;
+}
+
+.search-result th[data-dir="asc"]::after  { content: "▲"; }
+.search-result th[data-dir="desc"]::after { content: "▼"; }
