@@ -4,6 +4,7 @@ import {
   formatDate,
   formatFullName,
   showError,
+  toTitleCase,
 } from './scripts/utils';
 import { icon } from './scripts/icons';
 import { tabSwitcher } from "./scripts/tabs";
@@ -64,12 +65,14 @@ async function submitForm(e: SubmitEvent) {
 
   try {
     await db.execute(
-      "INSERT INTO records (lastname, firstname, middle, dofc) VALUES ($1, $2, $3, $4);",
+      "INSERT INTO records (lastname, firstname, middle, dofc, official_id, school_id) VALUES ($1, $2, $3, $4, $5, $6);",
       [
         data.get("lastname") as string,
         data.get("firstname") as string,
         (data.get("middle") as string) || null,
         data.get("communion-date") as string,
+        (data.get("official_id") as string) || null,
+        (data.get("school_id") as string) || null,
       ],
     );
     performSearch("");
@@ -133,15 +136,41 @@ async function fetchRecord(id: string): Promise<Record<string, any> | undefined>
   return rows[0];
 }
 
+async function fetchOfficial(id: string): Promise<Record<string, any> | undefined> {
+  const rows = await db.select<Record<string, any>[]>(
+    "SELECT * FROM official WHERE id = $1",
+    [id],
+  );
+  return rows[0];
+}
+
+async function fetchSchool(id: string): Promise<Record<string, any> | undefined> {
+  const rows = await db.select<Record<string, any>[]>(
+    "SELECT * FROM school WHERE id = $1",
+    [id],
+  );
+  return rows[0];
+}
+
 // ---------- Info modal ----------
 
 async function openInfoModal(id: string) {
-  const row = await fetchRecord(id);
-  if (!row) return;
+  const record = await fetchRecord(id);
+  if (!record) return;
 
-  $("infoName").textContent = formatFullName(row);
-  $("infoDate").textContent = formatDate(row.dofc);
-  $("infoCreatedAt").textContent = formatDate(row.created_at);
+  const official = await fetchOfficial(record.official_id);
+  if (!official) return;
+
+  const school = await fetchSchool(record.school_id);
+  if (!school) return;
+
+  console.log(official, school);
+
+  $("infoName").textContent = formatFullName(record);
+  $("infoDate").textContent = formatDate(record.dofc);
+  $("infoCreatedAt").textContent = formatDate(record.created_at);
+  $("infoOfficial").textContent = formatFullName(official);
+  $("infoSchool").textContent = toTitleCase(school.name);
 
   infoModal.showModal();
 }
@@ -180,6 +209,11 @@ async function openEditModal(id: string) {
   $<HTMLInputElement>("editMiddle").value = row.middle ?? "";
   $<HTMLInputElement>("editDofc").value = row.dofc;
 
+  await Promise.all([
+    loadOfficialSelect("editOfficialSelect", row.official_id),
+    loadSchoolSelect("editSchoolSelect", row.school_id),
+  ]);
+
   editModal.showModal();
 }
 
@@ -189,12 +223,14 @@ async function submitEdit(e: SubmitEvent) {
 
   try {
     await db.execute(
-      "UPDATE records SET lastname = $1, firstname = $2, middle = $3, dofc = $4 WHERE id = $5",
+      "UPDATE records SET lastname = $1, firstname = $2, middle = $3, dofc = $4, official_id = $5, school_id = $6 WHERE id = $7",
       [
         data.get("lastname") as string,
         data.get("firstname") as string,
         (data.get("middle") as string) || null,
         data.get("dofc") as string,
+        (data.get("official_id") as string) || null,
+        (data.get("school_id") as string) || null,
         data.get("id") as string,
       ],
     );
@@ -234,6 +270,7 @@ async function submitOfficial(e: SubmitEvent) {
     await saveOfficial(title, firstname, lastname);
     form.reset();
     officialModal.close();
+    await loadOfficialSelect("officialSelect");
     showToast(toastContainer, "Official added.");
   } catch (err) {
     console.error(err);
@@ -266,12 +303,58 @@ async function submitSchool(e: SubmitEvent) {
     await saveSchool(schoolName);
     form.reset();
     schoolModal.close();
+    await loadSchoolSelect("schoolSelect");
     showToast(toastContainer, "School added.");
   } catch (err) {
     console.error(err);
     showError("Could not save the school. Please try again.");
   }
 }
+
+// ---------- Select population ----------
+
+function buildOption(value: string, label: string): HTMLOptionElement {
+  const opt = document.createElement("option");
+  opt.value = value;
+  opt.textContent = label;
+  return opt;
+}
+
+const OFFICIALS_SQL = "SELECT id, title, firstname, lastname FROM official ORDER BY lastname, firstname";
+const SCHOOLS_SQL = "SELECT id, name FROM school ORDER BY name";
+
+function officialLabel(r: Record<string, any>): string {
+  return [r.title, r.firstname, r.lastname].filter(Boolean).join(" ");
+}
+
+function schoolLabel(r: Record<string, any>): string {
+  return r.name;
+}
+
+async function fillSelect(
+  selectId: string,
+  sql: string,
+  labelFn: (r: Record<string, any>) => string,
+  selectedId?: string | number | null,
+) {
+  const select = $<HTMLSelectElement>(selectId);
+
+  try {
+    const rows = await db.select<Record<string, any>[]>(sql, []);
+    select.replaceChildren(
+      buildOption("", "-- None --"),
+      ...rows.map((r) => buildOption(String(r.id), labelFn(r))),
+    );
+    select.value = selectedId != null ? String(selectedId) : "";
+  } catch (err) {
+    console.error(err);
+    showError(`Could not load options for ${selectId}.`);
+  }
+}
+
+const loadOfficialSelect = (id: string, selected?: string | number | null) => fillSelect(id, OFFICIALS_SQL, officialLabel, selected);
+
+const loadSchoolSelect = (id: string, selected?: string | number | null) => fillSelect(id, SCHOOLS_SQL, schoolLabel, selected);
 
 // ---------- Dialog behavior (backdrop click + close button) ----------
 
@@ -341,3 +424,7 @@ applyTheme((localStorage.getItem("theme") as "light" | "dark") ?? "light");
 
 performSearch("");
 runAutoBackupIfDue(DB_NAME);
+await Promise.all([
+  loadOfficialSelect("officialSelect"),
+  loadSchoolSelect("schoolSelect"),
+]);
