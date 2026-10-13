@@ -12,6 +12,7 @@ import { runAutoBackupIfDue } from "./scripts/backup";
 import { showToast } from "./scripts/toast";
 import { initTheme, applyTheme, toggleTheme } from "./scripts/theme";
 import { DB_NAME } from "./scripts/constants";
+import { initPins, restorePinned } from "./scripts/pin";
 
 // ---------- Setup ----------
 
@@ -77,6 +78,7 @@ async function submitForm(e: SubmitEvent) {
     );
     performSearch("");
     form.reset();
+    restorePinned(form);
     showToast(toastContainer, "Record added.");
   } catch (err) {
     console.error(err);
@@ -381,7 +383,10 @@ schoolForm.addEventListener("submit", submitSchool);
 
 clearButton.forEach((btn) => {
   btn.addEventListener("click", () => {
-    btn.closest("form")?.reset();
+    const form = btn.closest("form") as HTMLFormElement | null;
+    if (!form) return;
+    form.reset();
+    restorePinned(form);
   });
 });
 
@@ -428,3 +433,4 @@ await Promise.all([
   loadOfficialSelect("officialSelect"),
   loadSchoolSelect("schoolSelect"),
 ]);
+initPins(registerForm);

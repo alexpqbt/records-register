@@ -147,3 +147,57 @@ ul {
 .school {
   margin-bottom: 1em;
 }
+
+.field-with-pin {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.field-with-pin select {
+  flex: 5;
+}
+
+.field-with-pin .add-btn {
+  flex: 1;
+}
+
+.pin-btn {
+  background: transparent;
+  border: 1px solid var(--pico-muted-border-color);
+  color: var(--pico-muted-color);
+}
+
+/* Pin glyph via pseudo-element so the markup stays empty */
+.pin-btn::before {
+  content: "📌";
+  font-size: 1rem;
+  line-height: 1;
+  filter: grayscale(1);
+  opacity: 0.45;
+  transition: filter 120ms ease, opacity 120ms ease;
+}
+
+/* Hover feedback, only when unpinned */
+.pin-btn[aria-pressed="false"]:hover::before {
+  opacity: 0.75;
+}
+
+/* Pinned state — Pico's primary color, full-strength glyph */
+.pin-btn[aria-pressed="true"] {
+  --pico-border-color: var(--pico-primary);
+  --pico-color: var(--pico-primary);
+  border-color: var(--pico-primary);
+}
+
+.pin-btn[aria-pressed="true"]::before {
+  filter: none;
+  opacity: 1;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .pin-btn::before {
+    transition: none;
+  }
+}

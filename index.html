@@ -175,31 +175,40 @@
 
         <label>
           <h4 class="single-line-truncate">Date of First Communion</h4>
-          <input type="date" id="communion-date" name="communion-date" required>
         </label>
 
-        <div class="official grid">
-          <label>
-            <h4>Official</h4>
+        <div class="field-with-pin">
+          <button type="button" class="pin-btn outline secondary" data-pin="communion-date" aria-pressed="false" aria-label="Pin official"></button>
 
-            <select name="official_id" id="officialSelect">
-              <option value="">-- None --</option>
-            </select>
-          </label>
-
-          <button type="button" class="add-official" id="addOfficial">Add</button>
+          <input type="date" id="communion-date" name="communion-date" required>
         </div>
 
-        <div class="school grid">
-          <label>
-            <h4>School</h4>
+        <label for="officialSelect">
+          <h4>Official</h4>
+        </label>
 
-            <select name="school_id" id="schoolSelect">
-              <option value="">-- None --</option>
-            </select>
-          </label>
+        <div class="official field-with-pin">
+          <button type="button" class="pin-btn outline secondary" data-pin="official_id" aria-pressed="false" aria-label="Pin official"></button>
 
-          <button type="button" class="add-school" id="addSchool">Add</button>
+          <select name="official_id" id="officialSelect">
+            <option value="">-- None --</option>
+          </select>
+
+          <button type="button" class="add-btn add-official" id="addOfficial">Add</button>
+        </div>
+
+        <label for="schoolSelect">
+          <h4>School</h4>
+        </label>
+          
+        <div class="school field-with-pin">
+          <button type="button" class="pin-btn outline secondary" data-pin="school_id" aria-pressed="false" aria-label="Pin school"></button>
+
+          <select name="school_id" id="schoolSelect">
+            <option value="">-- None --</option>
+          </select>
+
+          <button type="button" class="add-btn add-school" id="addSchool">Add</button>
         </div>
 
         <div class="grid">
