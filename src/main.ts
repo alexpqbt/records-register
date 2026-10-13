@@ -3,8 +3,9 @@ import {
   $,
   formatDate,
   formatFullName,
+  officialNameFrom,
+  schoolNameFrom,
   showError,
-  toTitleCase,
 } from './scripts/utils';
 import { icon } from './scripts/icons';
 import { tabSwitcher } from "./scripts/tabs";
@@ -88,12 +89,34 @@ async function submitForm(e: SubmitEvent) {
 
 // ---------- Search / render ----------
 
+const SEARCH_SQL = `
+  SELECT
+    r.id,
+    r.lastname,
+    r.firstname,
+    r.middle,
+    r.dofc,
+    r.created_at,
+    r.official_id,
+    r.school_id,
+    o.title     AS o_title,
+    o.firstname AS o_firstname,
+    o.lastname  AS o_lastname,
+    s.name      AS s_name
+  FROM records r
+  LEFT JOIN official o ON o.id = r.official_id
+  LEFT JOIN school   s ON s.id = r.school_id
+  WHERE (r.firstname LIKE $1 OR r.lastname LIKE $2)
+    AND r.is_active = 1
+  ORDER BY r.created_at DESC
+`;
+
 async function performSearch(query: string) {
   try {
-    const rows = await db.select<Record<string, any>[]>(
-      "SELECT * FROM records WHERE (firstname LIKE $1 OR lastname LIKE $2) AND is_active = 1 ORDER BY created_at DESC",
-      [`%${query}%`, `%${query}%`],
-    );
+    const rows = await db.select<Record<string, any>[]>(SEARCH_SQL, [
+      `%${query}%`,
+      `%${query}%`,
+    ]);
     renderResults(rows);
   } catch (err) {
     console.error(err);
@@ -107,7 +130,7 @@ function renderResults(rows: Record<string, any>[]) {
   if (rows.length === 0) {
     resultBody.innerHTML = `
       <tr>
-        <td colspan="3" class="empty-state">No records found.</td>
+        <td colspan="5" class="empty-state">No records found.</td>
       </tr>
     `;
     return;
@@ -121,6 +144,8 @@ function rowToHtml(row: Record<string, any>): string {
     <tr>
       <td>${formatDate(row.dofc)}</td>
       <td>${formatFullName(row)}</td>
+      <td>${schoolNameFrom(row) || "None"}</td>
+      <td>${officialNameFrom(row) || "None"}</td>
       <td class="btn-group">
         <button class="info-btn" data-id="${row.id}">${icon("info")}</button>
         <button class="edit-btn" data-id="${row.id}">${icon("edit")}</button>
@@ -132,23 +157,16 @@ function rowToHtml(row: Record<string, any>): string {
 
 async function fetchRecord(id: string): Promise<Record<string, any> | undefined> {
   const rows = await db.select<Record<string, any>[]>(
-    "SELECT * FROM records WHERE id = $1",
-    [id],
-  );
-  return rows[0];
-}
-
-async function fetchOfficial(id: string): Promise<Record<string, any> | undefined> {
-  const rows = await db.select<Record<string, any>[]>(
-    "SELECT * FROM official WHERE id = $1",
-    [id],
-  );
-  return rows[0];
-}
-
-async function fetchSchool(id: string): Promise<Record<string, any> | undefined> {
-  const rows = await db.select<Record<string, any>[]>(
-    "SELECT * FROM school WHERE id = $1",
+    `SELECT
+       r.*,
+       o.title     AS o_title,
+       o.firstname AS o_firstname,
+       o.lastname  AS o_lastname,
+       s.name      AS s_name
+     FROM records r
+     LEFT JOIN official o ON o.id = r.official_id
+     LEFT JOIN school   s ON s.id = r.school_id
+     WHERE r.id = $1`,
     [id],
   );
   return rows[0];
@@ -157,22 +175,14 @@ async function fetchSchool(id: string): Promise<Record<string, any> | undefined>
 // ---------- Info modal ----------
 
 async function openInfoModal(id: string) {
-  const record = await fetchRecord(id);
-  if (!record) return;
+  const row = await fetchRecord(id);
+  if (!row) return;
 
-  const official = await fetchOfficial(record.official_id);
-  if (!official) return;
-
-  const school = await fetchSchool(record.school_id);
-  if (!school) return;
-
-  console.log(official, school);
-
-  $("infoName").textContent = formatFullName(record);
-  $("infoDate").textContent = formatDate(record.dofc);
-  $("infoCreatedAt").textContent = formatDate(record.created_at);
-  $("infoOfficial").textContent = formatFullName(official);
-  $("infoSchool").textContent = toTitleCase(school.name);
+  $("infoName").textContent = formatFullName(row);
+  $("infoDate").textContent = formatDate(row.dofc);
+  $("infoOfficial").textContent = officialNameFrom(row) || "—";
+  $("infoSchool").textContent = schoolNameFrom(row) || "—";
+  $("infoCreatedAt").textContent = formatDate(row.created_at);
 
   infoModal.showModal();
 }

@@ -24,3 +24,14 @@ export function formatFullName(row: Record<string, any>): string {
 export function showError(message: string) {
   alert(message); 
 }
+
+export function officialNameFrom(row: Record<string, any>): string {
+  if (!row.o_lastname && !row.o_firstname) return "";
+  return [row.o_title, row.o_firstname, row.o_lastname]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export function schoolNameFrom(row: Record<string, any>): string {
+  return row.s_name ?? "";
+}
