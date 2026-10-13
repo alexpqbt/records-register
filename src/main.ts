@@ -51,6 +51,7 @@ const officialForm = $<HTMLFormElement>("officialForm");
 const addSchool = $<HTMLButtonElement>("addSchool");
 const schoolModal = $<HTMLDialogElement>("schoolModal");
 const closeSchoolModal = $<HTMLButtonElement>("closeSchoolModal");
+const schoolForm = $<HTMLFormElement>("schoolForm");
 
 let pendingDeleteId: string | null = null;
 
@@ -240,6 +241,38 @@ async function submitOfficial(e: SubmitEvent) {
   }
 }
 
+// ---------- School modal ----------
+
+async function saveSchool(schoolName: string): Promise<void> {
+  await db.execute(
+    "INSERT INTO school (name) VALUES ($1);",
+    [schoolName],
+  );
+}
+
+async function submitSchool(e: SubmitEvent) {
+  e.preventDefault();
+  const form = e.target as HTMLFormElement;
+  const data = new FormData(form);
+
+  const schoolName = ((data.get("school-name") as string) ?? "").trim();
+
+  if (!schoolName) {
+    showError("School name is required.");
+    return;
+  }
+
+  try {
+    await saveSchool(schoolName);
+    form.reset();
+    schoolModal.close();
+    showToast(toastContainer, "School added.");
+  } catch (err) {
+    console.error(err);
+    showError("Could not save the school. Please try again.");
+  }
+}
+
 // ---------- Dialog behavior (backdrop click + close button) ----------
 
 function setupDialog(dialog: HTMLDialogElement, closeBtn: HTMLButtonElement) {
@@ -261,6 +294,7 @@ tablists.forEach((tablist) => tabSwitcher(tablist));
 registerForm.addEventListener("submit", submitForm);
 editForm.addEventListener("submit", submitEdit);
 officialForm.addEventListener("submit", submitOfficial);
+schoolForm.addEventListener("submit", submitSchool);
 
 clearButton.forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -285,10 +319,8 @@ resultBody.addEventListener("click", (e) => {
 cancelDelete.addEventListener("click", () => deleteModal.close());
 confirmDelete.addEventListener("click", deleteRecord);
 
-// TODO: Add db logic
 addOfficial.addEventListener("click", () => officialModal.showModal());
 
-// TODO: Add db logic
 addSchool.addEventListener("click", () => schoolModal.showModal());
 
 setupDialog(infoModal, closeInfoModal);
