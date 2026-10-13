@@ -5,7 +5,7 @@ export function $<T extends HTMLElement>(id: string): T {
 export function formatDate(isoDate: string): string {
   return new Date(isoDate).toLocaleDateString("en-US", {
     year: "numeric",
-    month: "long",
+    month: "2-digit",
     day: "2-digit",
   });
 }
