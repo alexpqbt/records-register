@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 :root {
   --pico-font-size: 90%;
 }
@@ -170,7 +172,7 @@ ul {
 
 /* Pin glyph via pseudo-element so the markup stays empty */
 .pin-btn::before {
-  content: "📌";
+  content: "\1F4CC";
   font-size: 1rem;
   line-height: 1;
   filter: grayscale(1);
